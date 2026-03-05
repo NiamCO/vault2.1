@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWNER PANEL · CODE MONITOR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, monospace;
+        }
+
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ededed;
+            padding: 20px;
+        }
+
+        .glass-panel {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 120, 0, 0.2);
+            border-radius: 48px;
+            padding: 48px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            font-weight: 300;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+        }
+
+        .code-display {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 120, 0, 0.3);
+            border-radius: 40px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #codeValue {
+            font-size: 3.5rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: #ff944d;
+            text-shadow: 0 0 20px rgba(255, 120, 0, 0.5);
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 15px;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .info-box p {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .refresh-note {
+            margin-top: 20px;
+            color: rgba(255, 120, 0, 0.6);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-panel">
+        <h1>✦ OWNER PANEL</h1>
+        <div class="subtitle">access code rotation · live monitor</div>
+
+        <div class="code-display">
+            <div id="codeValue">------</div>
+            <div class="timer" id="timerDisplay">refreshes in 5:00</div>
+        </div>
+
+        <div class="info-box">
+            <p>🔐 The access code changes every 5 minutes. Share this code with trusted users to grant entry to The Vault. The code is case‑sensitive and includes special characters.</p>
+            <p style="margin-top: 12px;">⚠️ This panel is for owner use only. Keep the URL private.</p>
+        </div>
+        <div class="refresh-note">next code generation in...</div>
+    </div>
+
+    <script>
+        (function() {
+            // Must match the generation logic in the main vault
+            function generateCode() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+                let code = '';
+                for (let i = 0; i < 8; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return code;
+            }
+
+            const codeElement = document.getElementById('codeValue');
+            const timerElement = document.getElementById('timerDisplay');
+
+            let currentCode = generateCode();
+            codeElement.textContent = currentCode;
+
+            // Update every 5 minutes (300 seconds)
+            const interval = 300; // seconds
+            let timeLeft = interval;
+
+            function updateTimer() {
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timerElement.textContent = `refreshes in ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            }
+
+            // Countdown and refresh
+            setInterval(() => {
+                if (timeLeft <= 0) {
+                    currentCode = generateCode();
+                    codeElement.textContent = currentCode;
+                    timeLeft = interval;
+                } else {
+                    timeLeft--;
+                }
+                updateTimer();
+            }, 1000);
+
+            // Also sync with the 5-minute rotation (though the above already does it)
+            setInterval(() => {
+                // This ensures the code changes exactly every 5 min even if countdown drifts
+                currentCode = generateCode();
+                codeElement.textContent = currentCode;
+                timeLeft = interval;
+                updateTimer();
+            }, 300000);
+        })();
+    </script>
+</body>
+</html>
