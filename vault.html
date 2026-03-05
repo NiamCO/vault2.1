@@ -1072,6 +1072,8 @@
                 }
             });
 
+            console.log('🔑 ACCESS CODE:', currentCode);
+            
             document.addEventListener('click', (e) => {
                 if (!chatSidebar.contains(e.target) && !chatToggleBtn.contains(e.target) && chatSidebar.classList.contains('open')) {
                     chatSidebar.classList.remove('open');
